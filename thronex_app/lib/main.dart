@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-`
+import 'package:thronex_app/profile/profile_page.dart';
+import 'chat/chat_list_page.dart';
+import 'package:thronex_app/listings/my_listings_page.dart';
+
 void main() {
   runApp(const ThronexApp());
 }
@@ -94,6 +97,42 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Image.asset('assets/logo/thronex_logo.png'),
             ),
             const SizedBox(height: 16),
+            // -------------------------------------
+            // SEARCH BAR
+            // -------------------------------------
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (_) => GlobalSearchPage()));
+                },
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search, color: colors.secondary, size: 22),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Search mobiles or spare parts",
+                        style: TextStyle(fontSize: 13, color: colors.secondary),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             Text(
               'Thronex',
               style: TextStyle(
@@ -131,10 +170,10 @@ class _ThronexHomeShellState extends State<ThronexHomeShell> {
 
   final _pages = [
     const HomePage(),
-    SparePartsPage(), // UPDATED
+    SparePartsPage(),
     const SellerOnboardingPage(),
-    const PlaceholderScreen(title: 'Chats'),
-    const PlaceholderScreen(title: 'Profile'),
+    ChatListPage(), // NEW CHAT SCREEN
+    const ProfilePage(),
   ];
 
   @override
@@ -219,6 +258,18 @@ class _ThronexHomeShellState extends State<ThronexHomeShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const SellerOnboardingPage()),
+          );
+        },
+        icon: const Icon(Icons.sell),
+        label: const Text("Sell Device"),
+      ),
+
       appBar: AppBar(
         title: Row(
           children: [
@@ -305,6 +356,10 @@ class _ThronexHomeShellState extends State<ThronexHomeShell> {
       ),
     );
   }
+}
+
+class colors {
+  static Color? get primary => null;
 }
 
 // -------------------------------------------------------
@@ -623,7 +678,11 @@ class HomePage extends StatelessWidget {
                   icon: Icons.memory,
                   title: "Spare Parts",
                   subtitle: "Screens, Batteries",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => SparePartsPage()));
+                  },
                 ),
                 _CategoryCard(
                   icon: Icons.build,
@@ -635,11 +694,20 @@ class HomePage extends StatelessWidget {
                   icon: Icons.sell,
                   title: "Sell Device",
                   subtitle: "List instantly",
-                  onTap: () => _openSeller(context),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const RepairPartnerPage(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
           ),
+
+          const SizedBox(height: 18),
 
           const SizedBox(height: 18),
 
@@ -664,13 +732,61 @@ class HomePage extends StatelessWidget {
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              children: const [
-                _BrandChip(label: "Apple"),
-                _BrandChip(label: "Samsung"),
-                _BrandChip(label: "OnePlus"),
-                _BrandChip(label: "Xiaomi"),
-                _BrandChip(label: "Vivo"),
-                _BrandChip(label: "Oppo"),
+              children: [
+                _BrandChip(
+                  label: "Apple",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _BrandChip(
+                  label: "Samsung",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _BrandChip(
+                  label: "OnePlus",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _BrandChip(
+                  label: "Xiaomi",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _BrandChip(
+                  label: "Vivo",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _BrandChip(
+                  label: "Oppo",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -698,13 +814,55 @@ class HomePage extends StatelessWidget {
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: const [
-                _FilterChipPill(label: "Under ₹10,000"),
-                _FilterChipPill(label: "Under ₹20,000"),
-                _FilterChipPill(label: "iPhone XR"),
-                _FilterChipPill(label: "OnePlus Nord"),
-                _FilterChipPill(label: "8 GB RAM"),
-                _FilterChipPill(label: "Gaming phones"),
+              children: [
+                _FilterChipPill(
+                  label: "Under ₹10,000",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _FilterChipPill(
+                  label: "Under ₹20,000",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _FilterChipPill(
+                  label: "iPhone XR",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _FilterChipPill(
+                  label: "OnePlus Nord",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _FilterChipPill(
+                  label: "8 GB RAM",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
+                _FilterChipPill(
+                  label: "Gaming phones",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -716,13 +874,33 @@ class HomePage extends StatelessWidget {
           // -------------------------------------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Featured near you",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: colors.onSurface,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Featured near you",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: colors.onSurface,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MobileListingPage()),
+                    );
+                  },
+                  child: Text(
+                    "See all",
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colors.primary,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -893,22 +1071,27 @@ class _CategoryCard extends StatelessWidget {
 
 class _BrandChip extends StatelessWidget {
   final String label;
+  final VoidCallback? onTap;
 
-  const _BrandChip({required this.label});
+  const _BrandChip({required this.label, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.grey.shade300),
-        color: Colors.white,
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: Colors.grey.shade300),
+          color: Colors.white,
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
@@ -916,22 +1099,28 @@ class _BrandChip extends StatelessWidget {
 
 class _FilterChipPill extends StatelessWidget {
   final String label;
+  final VoidCallback? onTap;
 
-  const _FilterChipPill({required this.label});
+  const _FilterChipPill({required this.label, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.grey.shade200),
-        color: colors.surface,
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: Colors.grey.shade200),
+          color: colors.surface,
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }
@@ -1810,7 +1999,13 @@ class SparePartsPage extends StatelessWidget {
                 final p = parts[i];
                 return InkWell(
                   borderRadius: BorderRadius.circular(16),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => SparePartDetailPage(part: p),
+                      ),
+                    );
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -2308,6 +2503,56 @@ class _BulletPoint extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class GlobalSearchPage extends StatelessWidget {
+  const GlobalSearchPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(title: const Text("Search")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: "Search mobiles or spare parts",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Start typing to explore listings…",
+              style: TextStyle(color: colors.secondary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RepairPartnerPage extends StatelessWidget {
+  const RepairPartnerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Service & Repair")),
+      body: const Center(
+        child: Text(
+          "Trusted repair partners coming soon.",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
